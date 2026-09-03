@@ -66,6 +66,36 @@ class PhonicToolConfig(TypedDict, total=False):
     forbid_tool_call_after_speech: bool
 
 
+class PhonicToolDefinition(TypedDict):
+    """Model-facing tool schema accepted by Phonic's Responses API."""
+
+    name: str
+    description: str
+    parameters: dict[str, typing.Any]
+
+
+def _to_phonic_tool_definition(tool_schema: dict[str, typing.Any]) -> PhonicToolDefinition:
+    function = tool_schema["function"]
+    return {
+        "name": function["name"],
+        "description": function.get("description") or "",
+        "parameters": function["parameters"],
+    }
+
+
+def to_phonic_tool_definitions(tool_context: llm.ToolContext) -> list[PhonicToolDefinition]:
+    """Convert LiveKit function tools to Phonic Responses API definitions.
+
+    The returned values contain schemas only; the executable callables remain in
+    ``tool_context`` for the caller to invoke when Phonic returns a tool call.
+    """
+
+    return [
+        _to_phonic_tool_definition(tool_schema)
+        for tool_schema in tool_context.parse_function_tools("openai", strict=True)
+    ]
+
+
 @dataclass
 class _RealtimeOptions:
     api_key: str
@@ -441,7 +471,8 @@ class RealtimeSession(llm.RealtimeSession):
     def _serialize_tools(self, tools: list[llm.Tool]) -> list[dict]:
         tool_definitions: list[dict] = []
         for tool_schema in llm.ToolContext(tools).parse_function_tools("openai", strict=True):
-            cfg = self._configs_for_tools.get(tool_schema["function"]["name"], {})
+            definition = _to_phonic_tool_definition(tool_schema)
+            cfg = self._configs_for_tools.get(definition["name"], {})
             tool_definitions.append(
                 {
                     "type": "custom_websocket",
