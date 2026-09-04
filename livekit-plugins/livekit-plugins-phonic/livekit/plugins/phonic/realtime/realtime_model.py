@@ -67,7 +67,7 @@ class PhonicToolConfig(TypedDict, total=False):
 
 
 class PhonicToolDefinition(TypedDict):
-    """Model-facing tool schema accepted by Phonic's Responses API."""
+    """Tool schema accepted by Phonic's Responses API."""
 
     name: str
     description: str
