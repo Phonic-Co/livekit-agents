@@ -73,6 +73,7 @@ class _RealtimeOptions:
     voice: NotGivenOr[str]
     welcome_message: NotGivenOr[str | None]
     generate_welcome_message: NotGivenOr[bool | None]
+    enable_watermarking: NotGivenOr[bool | None]
     project: NotGivenOr[str | None]
     default_language: NotGivenOr[str]
     additional_languages: NotGivenOr[list[str]]
@@ -130,6 +131,7 @@ class RealtimeModel(llm.RealtimeModel):
         voice: NotGivenOr[str] = NOT_GIVEN,
         welcome_message: NotGivenOr[str | None] = NOT_GIVEN,
         generate_welcome_message: NotGivenOr[bool] = NOT_GIVEN,
+        enable_watermarking: NotGivenOr[bool] = NOT_GIVEN,
         project: NotGivenOr[str | None] = NOT_GIVEN,
         default_language: NotGivenOr[str] = NOT_GIVEN,
         additional_languages: NotGivenOr[list[str]] = NOT_GIVEN,
@@ -160,6 +162,8 @@ class RealtimeModel(llm.RealtimeModel):
                 Ignored when ``generate_welcome_message`` is True.
             generate_welcome_message: When True, the welcome message is automatically generated
                 and ``welcome_message`` is ignored.
+            enable_watermarking: When True, embeds an inaudible provenance watermark in the agent's
+                generated audio. Adds a very small amount of latency.
             project: Project name to use for the conversation.
             default_language: ISO 639-1 default language for recognition and speech.
             additional_languages: Further ISO 639-1 codes the agent may use (must not include
@@ -231,6 +235,7 @@ class RealtimeModel(llm.RealtimeModel):
             voice=voice,
             welcome_message=welcome_message,
             generate_welcome_message=generate_welcome_message,
+            enable_watermarking=enable_watermarking,
             project=project,
             default_language=default_language,
             additional_languages=additional_languages,
@@ -568,6 +573,7 @@ class RealtimeSession(llm.RealtimeSession):
             "project": self._opts.project,
             "welcome_message": self._opts.welcome_message,
             "generate_welcome_message": self._opts.generate_welcome_message,
+            "enable_watermarking": self._opts.enable_watermarking,
             "system_prompt": system_prompt,
             "voice_id": self._opts.voice,
             "input_format": "pcm_24000",

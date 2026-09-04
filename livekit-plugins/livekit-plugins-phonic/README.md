@@ -88,6 +88,7 @@ Set the `PHONIC_API_KEY` environment variable, or pass `api_key` directly to `Re
 | `voice` | `str` | Voice ID — `sabrina`, `grant`, `virginia`, `landon`, `eleanor`, `shelby`, `nolan` |
 | `welcome_message` | `str` | Message the agent says when the conversation starts. Ignored when `generate_welcome_message` is True |
 | `generate_welcome_message` | `bool` | Auto-generate the welcome message (ignores `welcome_message`) |
+| `enable_watermarking` | `bool` | Embed an inaudible provenance watermark in generated audio. Adds a very small amount of latency |
 | `project` | `str` | Project name (default: `main`) |
 | `default_language` | `str` | ISO 639-1 default language for recognition and speech |
 | `additional_languages` | `list[str]` | Further ISO 639-1 codes (must not repeat `default_language`) |
